@@ -1,21 +1,24 @@
 import express from "express";
+import { body, param, query } from "express-validator";
+
 import * as tweetController from "../controller/tweet.js";
+import { validate } from "../middleware/validator.js";
+
 const router = express.Router();
 
-// 1. 전체 조회
-// 2. 유저 트윗 조회
+const validateTweet = [
+	body("text").trim().isLength({ min: 3 }).withMessage("text should be at least 3 characters"),
+	validate,
+];
+
 router.get("/", tweetController.getTweets);
 
-// 단일 조회
 router.get("/:id", tweetController.getTweet);
 
-// 생성
-router.post("/", tweetController.createTweet);
+router.post("/", validateTweet, tweetController.createTweet);
 
-// 수정
-router.put("/:id", tweetController.updateTweet);
+router.put("/:id", validateTweet, tweetController.updateTweet);
 
-// 삭제
 router.delete("/:id", tweetController.deleteTweet);
 
 export default router;
