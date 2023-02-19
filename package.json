@@ -1,0 +1,28 @@
+{
+  "name": "dweeter",
+  "version": "1.0.0",
+  "description": "practice express with rest api",
+  "main": "app.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chipmunk-dev/Dweeter.git"
+  },
+  "author": "chipmunk_dev",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/chipmunk-dev/Dweeter/issues"
+  },
+  "homepage": "https://github.com/chipmunk-dev/Dweeter#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  }
+}
