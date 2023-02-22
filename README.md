@@ -22,7 +22,7 @@ Express 학습을 위해 서버메모리를 이용한 심플 트위터 기능 �
 ```json
 {
 	id: number,
-	userId: string,
+	userName: string,
 	password: string,
 	email: string,
 	name: string,
@@ -53,20 +53,27 @@ Express 학습을 위해 서버메모리를 이용한 심플 트위터 기능 �
 - Path: `/users/login`
 - Parameter: X
 - Body
-  - userId: string
+  - userName: string
   - password: string
 
 #### 회원가입
 
 - Method: `POST`
-- Path: `users/register`
+- Path: `/users/signup`
 - Parameter: X
 - Body
-  - userId: string
+  - userName: string
   - password: string
   - email: string
   - name: string
   - url: string
+  
+#### 인증
+
+- Method: `GET`
+- Path: `/users/auth`
+- Parameter: X
+- Body: X
 
 ### 게시글 기능
 
