@@ -1,3 +1,4 @@
+let membersId = 2;
 const members = [
 	{
 		id: 1,
@@ -9,15 +10,13 @@ const members = [
 	},
 ];
 
-export async function create(userName, password, email, name, url) {
-	const user = { userName, password, email, name, url };
-	members.push(user);
+export async function findByUserName(userName) {
+	return members.find(member => member.userName === userName);
 }
 
-export async function login(userName, password) {
-	const user = members.find(
-		member => member.userName === userName && member.password === password
-	);
+export async function create(userName, password, email, name, url) {
+	const user = { id: membersId++, userName, password, email, name, url };
+	members.push(user);
 
 	return user;
 }
