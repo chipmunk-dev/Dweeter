@@ -43,7 +43,7 @@ export async function login(req, res) {
 		});
 
 		return res
-			.cookie("Authentication", token, {
+			.cookie("Authorization", token, {
 				httpOnly: true, // JavaScript에서 쿠키 접근 불가능
 				secure: true, // HTTPS만 쿠키 전송 가능
 				// sameSite: true -> 이건 같은 도메인에서 쿠키사용을 허용함
@@ -55,15 +55,24 @@ export async function login(req, res) {
 }
 
 export async function me(req, res) {
-	const authentication = req.header("Authentication");
+	const authorization = req.header("Authorization");
+
+	if (!authorization) return res.sendStatus(401);
 
 	// TODO: Token 해싱
-
 	try {
-		await authRepository.me(authentication);
-		return res.status(200).json();
-	} catch (error) {
-		console.error(error);
-		return res.status(403);
+		const user = await jwt.verify(authorization, privateKey);
+
+		const compareUser = await authRepository.findByUserName(user.userName);
+
+		if (!compareUser)
+			return res.status(401).json({ message: "잘못된 Token 값입니다." });
+
+		const mappedUser = Object.assign({}, compareUser);
+		delete mappedUser.password;
+
+		return res.status(200).json({ user: mappedUser });
+	} catch (err) {
+		return res.status(401).json({ message: "잘못된 Token값 입니다." });
 	}
 }
