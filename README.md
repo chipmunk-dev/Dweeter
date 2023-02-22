@@ -50,7 +50,7 @@ Express 학습을 위해 서버메모리를 이용한 심플 트위터 기능 �
 #### 로그인
 
 - Method: `POST`
-- Path: `/users/login`
+- Path: `/auth/login`
 - Parameter: X
 - Body
   - userName: string
@@ -59,7 +59,7 @@ Express 학습을 위해 서버메모리를 이용한 심플 트위터 기능 �
 #### 회원가입
 
 - Method: `POST`
-- Path: `/users/signup`
+- Path: `/auth/signup`
 - Parameter: X
 - Body
   - userName: string
@@ -67,11 +67,11 @@ Express 학습을 위해 서버메모리를 이용한 심플 트위터 기능 �
   - email: string
   - name: string
   - url: string
-  
+
 #### 인증
 
 - Method: `GET`
-- Path: `/users/auth`
+- Path: `/auth/auth`
 - Parameter: X
 - Body: X
 
