@@ -56,6 +56,7 @@ export async function create(text, userId) {
 	};
 
 	tweets = [tweet, ...tweets];
+	return getById(tweet.id);
 }
 
 export async function update(id, text) {
@@ -65,7 +66,7 @@ export async function update(id, text) {
 		tweet.text = text;
 	}
 
-	return tweet;
+	return getById(tweet.id);
 }
 
 export async function remove(id) {
