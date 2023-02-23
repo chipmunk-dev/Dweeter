@@ -16,7 +16,7 @@ const validateAuth = {
 		body("password")
 			.trim()
 			.isLength({ min: 5 })
-			.withMessage("`pssword`가 비어있습니다."),
+			.withMessage("`password`가 비어있습니다."),
 		body("email")
 			.isEmail()
 			.normalizeEmail()

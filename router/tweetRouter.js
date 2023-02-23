@@ -15,7 +15,7 @@ const validateTweet = [
 	validate,
 ];
 
-router.get("/", tweetController.getTweets);
+router.get("/", isAuth, tweetController.getTweets);
 
 router.get("/:id", isAuth, tweetController.getTweet);
 

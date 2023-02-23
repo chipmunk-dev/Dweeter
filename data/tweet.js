@@ -1,3 +1,5 @@
+import * as authRepository from "../data/auth.js";
+
 let increaseId = 3;
 
 let tweets = [
@@ -5,38 +7,52 @@ let tweets = [
 		id: 1,
 		text: "안녕하세요?",
 		createdAt: Date.now().toString(),
-		name: "quokka",
-		userName: "quokka54",
+		userId: 1,
 	},
 	{
 		id: 2,
 		text: "친구 구합니다.",
 		createdAt: Date.now().toString(),
-		name: "chipmunk",
-		userName: "dev_chip",
+		userId: 2,
 	},
 ];
 
 export async function getAll() {
-	return tweets;
+	return Promise.all(
+		tweets.map(async tweet => {
+			const { userName, name, url } = await authRepository.findByUserId(
+				tweet.userId
+			);
+
+			return { ...tweet, userName, name, url };
+		})
+	);
 }
 
 export async function getAllByUserName(userName) {
+	const tweets = await getAll();
+
 	return tweets.filter(tweet => tweet.userName === userName);
 }
 
 export async function getById(id) {
-	return tweets.find(tweet => tweet.id === parseInt(id));
+	const tweet = tweets.find(tweet => tweet.id === parseInt(id));
+
+	if (!tweet) return null;
+
+	const { userName, name, url } = await authRepository.findByUserId(
+		tweet.userId
+	);
+
+	return { ...tweet, userName, name, url };
 }
 
-export async function create(text, name, userName, url) {
+export async function create(text, userId) {
 	const tweet = {
 		id: increaseId++,
 		text,
 		createdAt: new Date(),
-		name,
-		userName,
-		url: url || null,
+		userId,
 	};
 
 	tweets = [tweet, ...tweets];

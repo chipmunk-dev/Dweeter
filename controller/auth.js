@@ -38,13 +38,11 @@ export async function signup(req, res) {
 export async function login(req, res) {
 	const { userName, password } = req.body;
 	const user = await authRepository.findByUserName(userName);
-	console.log(userName, password);
 	if (!user) {
 		return res
 			.status(401)
 			.json({ message: "아이디 혹은 비밀번호를 확인해주세요." });
 	}
-	console.log(user);
 
 	const isValidPassword = await bcrypt.compare(password, user.password);
 
