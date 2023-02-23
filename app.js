@@ -5,6 +5,7 @@ import helmet from "helmet";
 
 import tweetsRouter from "./router/tweetRouter.js";
 import authRouter from "./router/auth.js";
+import { config } from "./config.js";
 
 const app = express();
 
@@ -24,4 +25,4 @@ app.use((error, req, res, next) => {
 	console.error(error);
 	res.sendStatus(500);
 });
-app.listen(8080, () => console.log("Connected..."));
+app.listen(config.host.port, () => console.log("Connected..."));
