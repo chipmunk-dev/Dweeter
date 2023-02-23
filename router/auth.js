@@ -1,7 +1,8 @@
 import express from "express";
-import { body, header } from "express-validator";
+import { body } from "express-validator";
 
 import * as authController from "../controller/auth.js";
+import { isAuth } from "../middleware/auth.js";
 import { validate } from "../middleware/validator.js";
 
 const router = express.Router();
@@ -28,13 +29,12 @@ const validateAuth = {
 		validate,
 	],
 	login: [body("userName").notEmpty(), body("password").notEmpty(), validate],
-	me: [header("Authentication").notEmpty(), validate],
 };
 
 router.post("/signup", validateAuth.signup, authController.signup);
 
 router.post("/login", validateAuth.login, authController.login);
 
-router.get("/me", validateAuth.me, authController.me);
+router.get("/me", isAuth, authController.me);
 
 export default router;

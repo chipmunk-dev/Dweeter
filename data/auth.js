@@ -10,6 +10,10 @@ const members = [
 	},
 ];
 
+export async function findByUserId(userId) {
+	return members.find(member => member.id === userId);
+}
+
 export async function findByUserName(userName) {
 	return members.find(member => member.userName === userName);
 }

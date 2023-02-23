@@ -11,6 +11,7 @@ function createJwtToken(id) {
 	return jwt.sign({ id }, jwtSecretKey, { expiresIn: jwtExpiresInDays });
 }
 
+// 회원가입
 export async function signup(req, res) {
 	const { userName, password, email, name, url } = req.body;
 	const user = await authRepository.findByUserName(userName);
@@ -33,6 +34,7 @@ export async function signup(req, res) {
 	return res.status(201).json({ token, userName });
 }
 
+// 로그인
 export async function login(req, res) {
 	const { userName, password } = req.body;
 	const user = await authRepository.findByUserName(userName);
@@ -57,24 +59,13 @@ export async function login(req, res) {
 	return res.status(200).json({ token, userName }); // 동일 사이트에서만 쿠키 전송 가능
 }
 
+// 인증
 export async function me(req, res) {
-	const authorization = req.header("Authorization");
+	const user = await authRepository.findByUserId(req.userId);
 
-	if (!authorization) return res.sendStatus(401);
-
-	// TODO: Token 해싱
-	try {
-		const user = await jwt.verify(authorization, jwtSecretKey);
-		const compareUser = await authRepository.findByUserName(user.userName);
-
-		if (!compareUser)
-			return res.status(401).json({ message: "잘못된 Token 값입니다." });
-
-		const mappedUser = Object.assign({}, compareUser);
-		delete mappedUser.password;
-
-		return res.status(200).json({ user: mappedUser });
-	} catch (err) {
-		return res.status(401).json({ message: "잘못된 Token값 입니다." });
+	if (!user) {
+		return res.status(404).json({ message: "유저를 찾을 수 없습니다." });
 	}
+
+	return res.status(200).json({ token: req.token, userName: user.userName });
 }
