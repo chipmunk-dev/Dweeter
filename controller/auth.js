@@ -1,10 +1,11 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import * as authRepository from "../data/auth.js";
+import { config } from "../config.js";
 
 function createJwtToken(id) {
-	return jwt.sign({ id }, process.env.JWT_SECRET, {
-		expiresIn: process.env.JWT_EXPIRES_SEC,
+	return jwt.sign({ id }, config.jwt.secretKey, {
+		expiresIn: config.jwt.expiresInSec,
 	});
 }
 
@@ -17,7 +18,7 @@ export async function signup(req, res) {
 		return res.status(409).json({ message: "이미 존재하는 유저입니다." });
 	}
 
-	const salt = await bcrypt.genSalt(parseInt(process.env.BCRYPT_SALT_ROUNDS));
+	const salt = await bcrypt.genSalt(parseInt(config.bcrypt.saltRounds));
 	const hash = await bcrypt.hash(password, salt);
 	const userId = await authRepository.create({
 		userName,
