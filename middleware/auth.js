@@ -2,7 +2,6 @@ import jwt from "jsonwebtoken";
 import * as authRepository from "../data/auth.js";
 
 const AUTH_ERROR = { message: "Authentication Error" };
-const jwtSecretKey = "Quokkajeong";
 
 export const isAuth = async (req, res, next) => {
 	const authHeader = req.get("Authorization");
@@ -14,7 +13,7 @@ export const isAuth = async (req, res, next) => {
 	const token = authHeader.split(" ")[1];
 
 	try {
-		const decoded = await jwt.verify(token, jwtSecretKey);
+		const decoded = await jwt.verify(token, process.env.JWT_SECRET);
 		const user = await authRepository.findByUserId(decoded.id);
 
 		if (!user) {

@@ -2,10 +2,12 @@ import express from "express";
 import cors from "cors";
 import morgan from "morgan";
 import helmet from "helmet";
+import dotenv from "dotenv";
 
 import tweetsRouter from "./router/tweetRouter.js";
 import authRouter from "./router/auth.js";
 
+dotenv.config();
 const app = express();
 
 app.use(express.json());

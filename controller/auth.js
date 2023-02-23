@@ -2,13 +2,10 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import * as authRepository from "../data/auth.js";
 
-// TODO: 환경변수로 빼기
-const jwtSecretKey = "Quokkajeong";
-const jwtExpiresInDays = "2d";
-const bcryptSaltRounds = 10;
-
 function createJwtToken(id) {
-	return jwt.sign({ id }, jwtSecretKey, { expiresIn: jwtExpiresInDays });
+	return jwt.sign({ id }, process.env.JWT_SECRET, {
+		expiresIn: process.env.JWT_EXPIRES_SEC,
+	});
 }
 
 // 회원가입
@@ -20,7 +17,7 @@ export async function signup(req, res) {
 		return res.status(409).json({ message: "이미 존재하는 유저입니다." });
 	}
 
-	const salt = await bcrypt.genSalt(bcryptSaltRounds);
+	const salt = await bcrypt.genSalt(parseInt(process.env.BCRYPT_SALT_ROUNDS));
 	const hash = await bcrypt.hash(password, salt);
 	const userId = await authRepository.create({
 		userName,
