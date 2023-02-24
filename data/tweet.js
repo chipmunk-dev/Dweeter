@@ -1,74 +1,51 @@
-import * as authRepository from "../data/auth.js";
+import { db } from "./db/database.js";
 
-let increaseId = 3;
-
-let tweets = [
-	{
-		id: 1,
-		text: "안녕하세요?",
-		createdAt: Date.now().toString(),
-		userId: 1,
-	},
-	{
-		id: 2,
-		text: "친구 구합니다.",
-		createdAt: Date.now().toString(),
-		userId: 2,
-	},
-];
-
+// 쿼리 변수
+const TWEET_JOIN =
+	"SELECT t.id, t.text, t.userId, t.createdAt, u.username, u.name, u.url FROM TWEETS as t JOIN users as u ON t.userid = u.id";
+const ORDER_BY_CREATED_AT = "ORDER BY t.createdAt DESC";
+// 트윗 조회 -> 전체 리스트
 export async function getAll() {
-	return Promise.all(
-		tweets.map(async tweet => {
-			const { username, name, url } = await authRepository.findByUserId(
-				tweet.userId
-			);
-
-			return { ...tweet, username, name, url };
-		})
-	);
+	return db
+		.execute(`${TWEET_JOIN} ${ORDER_BY_CREATED_AT}`)
+		.then(result => result[0]);
 }
 
+// 트윗 조회 -> 유저가 작성한 트윗 리스트
 export async function getAllByUserName(username) {
-	const tweets = await getAll();
-
-	return tweets.filter(tweet => tweet.username === username);
+	return db
+		.execute(`${TWEET_JOIN} WHERE u.username=? ${ORDER_BY_CREATED_AT}`, [
+			username,
+		])
+		.then(result => result[0]);
 }
 
+// 트윗 조회 -> 단일 트윗 조회
 export async function getById(id) {
-	const tweet = tweets.find(tweet => tweet.id === parseInt(id));
-
-	if (!tweet) return null;
-
-	const { username, name, url } = await authRepository.findByUserId(
-		tweet.userId
-	);
-
-	return { ...tweet, username, name, url };
+	return db
+		.execute(`${TWEET_JOIN} WHERE t.id=? ${ORDER_BY_CREATED_AT}`, [id])
+		.then(result => result[0][0]);
 }
 
+// 트윗 생성
 export async function create(text, userId) {
-	const tweet = {
-		id: increaseId++,
-		text,
-		createdAt: new Date(),
-		userId,
-	};
-
-	tweets = [tweet, ...tweets];
-	return getById(tweet.id);
+	return db
+		.execute("INSERT INTO tweets (text, createdAt, userId) VALUES (?, ?, ?)", [
+			text,
+			new Date(),
+			userId,
+		])
+		.then(async result => await getById(result[0].insertId));
 }
 
+// 트윗 수정
 export async function update(id, text) {
-	const tweet = tweets.find(t => t.id === parseInt(id));
-
-	if (tweet) {
-		tweet.text = text;
-	}
-
-	return getById(tweet.id);
+	return db
+		.execute("UPDATE tweets SET text=? WHERE id=?", [text, id])
+		.then(async () => await getById(id));
 }
 
+// 트윗 삭제
 export async function remove(id) {
-	tweets = tweets.filter(t => t.id !== parseInt(id));
+	return db.execute("DELETE FROM tweets WHERE id=?", [id]);
 }
