@@ -6,7 +6,8 @@ import helmet from "helmet";
 import tweetsRouter from "./router/tweetRouter.js";
 import authRouter from "./router/auth.js";
 import { config } from "./config.js";
-import { Server } from "socket.io";
+import { initSocket } from "./connection/socket.js";
+import { db } from "./data/db/database.js";
 
 const app = express();
 
@@ -26,5 +27,7 @@ app.use((error, req, res, next) => {
 	console.error(error);
 	res.sendStatus(500);
 });
+
+db.getConnection().then(connection => console.log(connection));
 const server = app.listen(config.host.port, () => console.log("Connected..."));
 initSocket(server);
