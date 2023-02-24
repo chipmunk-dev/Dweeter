@@ -15,7 +15,7 @@ export const isAuth = async (req, res, next) => {
 
 	try {
 		const decoded = await jwt.verify(token, config.jwt.secretKey);
-		const user = await authRepository.findByUserId(decoded.id);
+		const user = await authRepository.findByUserId(parseInt(decoded.id));
 
 		if (!user) {
 			return res.status(401).json(AUTH_ERROR);
@@ -24,6 +24,7 @@ export const isAuth = async (req, res, next) => {
 		req.userId = user.id; // custom attribute
 		next();
 	} catch (err) {
+		console.error(err);
 		return res.status(401).json(AUTH_ERROR);
 	}
 };

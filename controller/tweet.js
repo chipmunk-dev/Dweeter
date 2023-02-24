@@ -1,9 +1,9 @@
 import * as tweetRepository from "../data/tweet.js";
 
 export async function getTweets(req, res) {
-	const { userName } = req.query;
-	const data = await (userName
-		? tweetRepository.getAllByUserName(userName)
+	const { username } = req.query;
+	const data = await (username
+		? tweetRepository.getAllByUserName(username)
 		: tweetRepository.getAll());
 
 	res.status(200).json(data);
@@ -21,14 +21,14 @@ export async function getTweet(req, res) {
 }
 
 export async function createTweet(req, res) {
-	const { text, name, userName, url } = req.body;
+	const { text, name, username, url } = req.body;
 
-	if (text && name && userName) {
-		await tweetRepository.create(text, name, userName, url);
+	if (text && name && username) {
+		await tweetRepository.create(text, name, username, url);
 		return res.sendStatus(201);
 	}
 
-	return res.status(400).send("text or name or userName is missing");
+	return res.status(400).send("text or name or username is missing");
 }
 
 export async function updateTweet(req, res) {

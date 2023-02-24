@@ -9,7 +9,7 @@ const router = express.Router();
 
 const validateAuth = {
 	signup: [
-		body("userName")
+		body("username")
 			.trim()
 			.isLength({ min: 5 })
 			.withMessage("`username`이 비어있습니다."),
@@ -28,7 +28,7 @@ const validateAuth = {
 		}),
 		validate,
 	],
-	login: [body("userName").notEmpty(), body("password").notEmpty(), validate],
+	login: [body("username").notEmpty(), body("password").notEmpty(), validate],
 };
 
 router.post("/signup", validateAuth.signup, authController.signup);

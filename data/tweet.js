@@ -20,19 +20,19 @@ let tweets = [
 export async function getAll() {
 	return Promise.all(
 		tweets.map(async tweet => {
-			const { userName, name, url } = await authRepository.findByUserId(
+			const { username, name, url } = await authRepository.findByUserId(
 				tweet.userId
 			);
 
-			return { ...tweet, userName, name, url };
+			return { ...tweet, username, name, url };
 		})
 	);
 }
 
-export async function getAllByUserName(userName) {
+export async function getAllByUserName(username) {
 	const tweets = await getAll();
 
-	return tweets.filter(tweet => tweet.userName === userName);
+	return tweets.filter(tweet => tweet.username === username);
 }
 
 export async function getById(id) {
@@ -40,11 +40,11 @@ export async function getById(id) {
 
 	if (!tweet) return null;
 
-	const { userName, name, url } = await authRepository.findByUserId(
+	const { username, name, url } = await authRepository.findByUserId(
 		tweet.userId
 	);
 
-	return { ...tweet, userName, name, url };
+	return { ...tweet, username, name, url };
 }
 
 export async function create(text, userId) {
