@@ -40,7 +40,9 @@ export async function create(text, userId) {
 		url,
 	};
 
-	return await getTweets().insertOne(tweet).then(mapOptionalTweet);
+	return await getTweets()
+		.insertOne(tweet)
+		.then(data => mapOptionalTweet({ ...tweet, _id: data.insertedId }));
 }
 
 // tweet 업데이트
