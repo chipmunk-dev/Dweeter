@@ -1,27 +1,24 @@
-let membersId = 2;
-const members = [
-	{
-		id: 1,
-		userName: "admin",
-		password:
-			"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNjc3MTMwMjczLCJleHAiOjE2NzczMDMwNzN9.2jQyvQr1QPSmCCPQXm0zH-85zEkAEe5NM78cpsr9aIY",
-		email: "admin@a.a",
-		name: "admin",
-		url: null,
-	},
-];
+import { ObjectId } from "mongodb";
+import { getUsers } from "../database/database.js";
+
+export async function findByUserName(username) {
+	return getUsers() //
+		.findOne({ username }) //
+		.then(mapOptionalUser);
+}
 
 export async function findByUserId(userId) {
-	return members.find(member => member.id === userId);
+	return getUsers()
+		.findOne({ _id: new ObjectId(userId) })
+		.then(mapOptionalUser);
 }
 
-export async function findByUserName(userName) {
-	return members.find(member => member.userName === userName);
+export async function create(user) {
+	return getUsers()
+		.insertOne(user)
+		.then(data => data.insertedId.toString());
 }
 
-export async function create({ userName, password, email, name, url }) {
-	const user = { id: membersId++, userName, password, email, name, url };
-	members.push(user);
-
-	return user.id;
+function mapOptionalUser(user) {
+	return user && { ...user, id: user._id };
 }

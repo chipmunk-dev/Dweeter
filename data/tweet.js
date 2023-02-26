@@ -1,74 +1,69 @@
-import * as authRepository from "../data/auth.js";
+import { ObjectId } from "mongodb";
+import * as authRepository from "./auth.js";
+import { getTweets } from "../database/database.js";
 
-let increaseId = 3;
-
-let tweets = [
-	{
-		id: 1,
-		text: "안녕하세요?",
-		createdAt: Date.now().toString(),
-		userId: 1,
-	},
-	{
-		id: 2,
-		text: "친구 구합니다.",
-		createdAt: Date.now().toString(),
-		userId: 2,
-	},
-];
-
+// 모든 트윗 조회
 export async function getAll() {
-	return Promise.all(
-		tweets.map(async tweet => {
-			const { userName, name, url } = await authRepository.findByUserId(
-				tweet.userId
-			);
-
-			return { ...tweet, userName, name, url };
-		})
-	);
+	return await getTweets()
+		.find()
+		.sort({ createdAt: -1 })
+		.toArray()
+		.then(mapTweets);
 }
 
-export async function getAllByUserName(userName) {
-	const tweets = await getAll();
-
-	return tweets.filter(tweet => tweet.userName === userName);
+// username이 같은 트윗 조회
+export async function getAllByUserName(username) {
+	return await getTweets()
+		.find({ username })
+		.sort({ createdAt: -1 })
+		.toArray()
+		.then(mapTweets);
 }
 
+// tweet id를 이용한 단일 조회
 export async function getById(id) {
-	const tweet = tweets.find(tweet => tweet.id === parseInt(id));
-
-	if (!tweet) return null;
-
-	const { userName, name, url } = await authRepository.findByUserId(
-		tweet.userId
-	);
-
-	return { ...tweet, userName, name, url };
+	return await getTweets()
+		.findOne({ _id: new ObjectId(id) })
+		.then(mapOptionalTweet);
 }
 
+// tweet 생성
 export async function create(text, userId) {
+	const { username, name, url } = await authRepository.findByUserId(userId);
+
 	const tweet = {
-		id: increaseId++,
 		text,
 		createdAt: new Date(),
 		userId,
+		username,
+		name,
+		url,
 	};
 
-	tweets = [tweet, ...tweets];
-	return getById(tweet.id);
+	return await getTweets().insertOne(tweet).then(mapOptionalTweet);
 }
 
+// tweet 업데이트
 export async function update(id, text) {
-	const tweet = tweets.find(t => t.id === parseInt(id));
-
-	if (tweet) {
-		tweet.text = text;
-	}
-
-	return getById(tweet.id);
+	return getTweets()
+		.findOneAndUpdate(
+			{ _id: new ObjectId(id) },
+			{ $set: { text } },
+			{ returnDocument: "after" }
+		)
+		.then(data => data.value)
+		.then(mapOptionalTweet);
 }
 
+// tweet 삭제
 export async function remove(id) {
-	tweets = tweets.filter(t => t.id !== parseInt(id));
+	return getTweets().deleteOne({ _id: new ObjectId(id) });
+}
+
+function mapOptionalTweet(tweet) {
+	return tweet && { id: tweet._id.toString(), ...tweet };
+}
+
+function mapTweets(tweets) {
+	return tweets.map(mapOptionalTweet);
 }
