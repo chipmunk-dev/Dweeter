@@ -15,7 +15,6 @@ export const isAuth = async (req, res, next) => {
 
 	try {
 		const decoded = await jwt.verify(token, config.jwt.secretKey);
-		console.log(decoded);
 		const user = await authRepository.findByUserId(decoded.id);
 
 		if (!user) {
